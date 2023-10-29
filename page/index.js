@@ -1,6 +1,6 @@
 import * as hmUI from "@zos/ui";
 import AutoGUI from "@silver-zepp/autogui";
-import { createWidget, widget, prop } from "@zos/ui";
+import { createWidget, widget, prop, event } from "@zos/ui";
 import { Vibrator, VIBRATOR_SCENE_DURATION } from "@zos/sensor";
 import { log as Logger } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
@@ -13,6 +13,23 @@ import {
 import { create, id } from "@zos/media";
 
 const player = create(id.PLAYER);
+
+player.addEventListener(player.event.PREPARE, function (result) {
+  if (result) {
+    console.log("=== prepare succeed ===");
+    player.setVolume(100);
+    player.start();
+  } else {
+    console.log("=== prepare fail ===");
+    player.release();
+  }
+});
+
+player.addEventListener(player.event.COMPLETE, function (result) {
+  console.log("=== play end ===");
+  player.stop();
+  player.release();
+});
 
 const gui = new AutoGUI();
 const logger = Logger.getLogger("fetch_api");
@@ -66,7 +83,6 @@ Page(
         text: "SOS",
         text_size: 120,
         click_func: (button_widget) => {
-          this.fetchData();
           button_widget.setProperty(prop.MORE, {
             x: 90,
             y: 105,
@@ -82,6 +98,7 @@ Page(
             file: "raw/SOS_Siren.mp3",
           });
           vibrator.start();
+          player.prepare();
 
           const img_hour = createWidget(widget.IMG);
           img_hour.setProperty(prop.MORE, {
@@ -91,18 +108,8 @@ Page(
             h: 500,
             src: "/raw/mapImage2.png",
           });
-          const textbutt = createWidget(widget.BUTTON, {
-            x: (480 - 400) / 2,
-            y: 100,
-            w: 400,
-            h: 50,
-            radius: 12,
-            text_size: 22,
-            color: 0x000000,
-            normal_color: 0xbfafaf,
-            press_color: 0xbfafaf,
-            text: "District Six",
-          });
+
+          this.fetchData();
 
           console.log(lattext);
         },
@@ -117,23 +124,22 @@ Page(
         lon: geolocation.getLongitude(),
       })
         .then((data) => {
-          console.log(data);
+          console.log("Data:", data);
           const { text } = data;
-          textbutt.addEventListener(event.CLICK_DOWN, (info) => {
-            textbutt.setProperty(prop.MORE, {
-              text: data,
-            });
+          console.log(text);
+
+          const textbutt = createWidget(widget.BUTTON, {
+            x: (480 - 400) / 2,
+            y: 100,
+            w: 400,
+            h: 50,
+            radius: 12,
+            text_size: 22,
+            color: 0x000000,
+            normal_color: 0xbfafaf,
+            press_color: 0xbfafaf,
+            text: data,
           });
-
-          if (!textWidget) {
-            textWidget = hmUI.createWidget(hmUI.widget.TEXT, {
-              ...FETCH_RESULT_TEXT,
-
-              text,
-            });
-          } else {
-            textWidget.setProperty(hmUI.prop.TEXT, text);
-          }
         })
         .catch((res) => {
           console.log("watch fetch data failed");
