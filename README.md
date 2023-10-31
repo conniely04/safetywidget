@@ -1,4 +1,4 @@
-# safetywidget
+
 # Amazfit Emergency Safety Widget
 
 Amazfit Emergency Safety Widget is a project designed to provide safety and peace of mind, not only for women but for anyone who needs to travel home at night. Leveraging the power of the Zepp OS platform, this project combines hardware and software to create a reliable companion for your nightly journeys.
