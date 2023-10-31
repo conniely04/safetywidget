@@ -2,7 +2,7 @@
   "configVersion": "v3",
   "app": {
     "appId": 29270,
-    "appName": "Fetch API",
+    "appName": "Safety Widget",
     "appType": "app",
     "version": {
       "code": 1,
@@ -48,7 +48,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Fetch API"
+      "appName": "Safety Widget"
     }
   },
   "defaultLanguage": "en-US"
